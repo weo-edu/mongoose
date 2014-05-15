@@ -1,5 +1,5 @@
 {
-  "name": "mongoose-client",
+  "name": "mongoose",
   "description": "Mongoose MongoDB ODM",
   "version": "3.8.9-pre",
   "author": "Guillermo Rauch <guillermo@learnboost.com>",
