@@ -487,4 +487,30 @@ describe('document: hooks:', function () {
     });
   });
 
+  it('synchronous pre-save hooks on nested documents should not cause premature hook termination', function(done) {
+    var subSchema = new Schema({str: String});
+    subSchema.pre('save', function(next) {
+      this.str = 'test';
+      next();
+    });
+
+    var schema = new Schema({
+      arr1: [subSchema],
+      arr2: [subSchema]
+    });
+
+    var db = start();
+    var M = db.model('pre-save-hook-sub', schema);
+    var doc = new M({arr1: [{str: 'a'}], arr2: [{str: 'b'}]});
+
+    doc.save(function(err) {
+      assert.ifError(err);
+
+      M.findById(doc.id, function(err, doc) {
+        assert.equal(doc.arr1[0].str, 'test');
+        assert.equal(doc.arr2[0].str, 'test');
+        done();
+      });
+    });
+  });
 });
